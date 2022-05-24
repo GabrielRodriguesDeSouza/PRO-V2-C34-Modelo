@@ -31,17 +31,36 @@ var cut_sound;
 var sad_sound;
 var eating_sound;
 
+var star
+var starImg
+var star2
+
+var ar_btn
+
+var starDisplay
+var emptyStar
+var oneStar
+var twoStar
+
 function preload()
 {
   bg_img = loadImage('background.png');
   food = loadImage('melon.png');
   rabbit = loadImage('Rabbit-01.png');
+  starImg = loadImage("star.png")
+  emptyStar = loadImage("empty.png")
+  oneStar = loadImage("one_star.png")
+  twoStar = loadImage("stars.png")
+
   
   bk_song = loadSound('sound1.mp3');
   sad_sound = loadSound("sad.wav")
   cut_sound = loadSound('rope_cut.mp3');
   eating_sound = loadSound('eating_sound.mp3');
   air = loadSound('air.wav');
+
+  
+
 
   blink = loadAnimation("blink_1.png","blink_2.png","blink_3.png");
   eat = loadAnimation("eat_0.png" , "eat_1.png","eat_2.png","eat_3.png","eat_4.png");
@@ -65,6 +84,33 @@ function setup()
 
   engine = Engine.create();
   world = engine.world;
+
+  starDisplay = createSprite(50,20,30,30)
+  starDisplay.addImage("vazio",emptyStar)
+  starDisplay.addImage("star",oneStar)
+  starDisplay.addImage("stars",twoStar)
+  starDisplay.changeImage("vazio")
+  starDisplay.scale = 0.2
+
+  //estrelas 
+
+  star = createSprite(320,50,20,20)
+  star.addImage(starImg)
+  star.scale = 0.02
+
+  //estrela 2
+
+  star2 = createSprite(50,370,20,20)
+  star2.addImage(starImg)
+  star2.scale = 0.02
+
+//botao de ar
+ar_btn = createImg("balloon.png")
+ar_btn.position(260,370)
+ar_btn.size(120,120)
+ar_btn.mouseClicked(Ar_baloon)
+
+
 
   //botão 1
   button = createImg('cut_btn.png');
@@ -132,7 +178,7 @@ function draw()
 
   drawSprites();
 
-  if(collide(fruit,bunny)==true)
+  if(collide(fruit,bunny,80)==true)
   {
     World.remove(engine.world,fruit);
     fruit = null;
@@ -148,6 +194,15 @@ function draw()
     fruit=null;
    }
   
+   if (collide(fruit,star,20)) {
+     star.visible = false
+     starDisplay.changeImage("star")
+   }
+
+   if (collide(fruit,star2,20)) {
+    star2.visible = false
+    starDisplay.changeImage("stars")
+  }
 }
 
 function drop()
@@ -166,12 +221,12 @@ function drop2()
   fruit_con_2 = null;
 }
 
-function collide(body,sprite)
+function collide(body,sprite,x)
 {
   if(body!=null)
         {
          var d = dist(body.position.x,body.position.y,sprite.position.x,sprite.position.y);
-          if(d<=80)
+          if(d<=x)
             {
                return true; 
             }
@@ -193,3 +248,7 @@ function mute()
      }
 }
 
+function Ar_baloon(){
+  Matter.Body.applyForce(fruit,{x:0,y:0},{x:0,y:-0.03})
+  air.play()
+}
